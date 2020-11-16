@@ -7,11 +7,12 @@ var data;
 d3.json('samples.json').then(jsonData => {
     data = jsonData;
 
+// cycle thru name data for dropdown menu
     var names = data.names;
     names.forEach(name => {
         select.append('option').text(name).property('value', name);
     });
-
+// pass name data for each visual
     showDemo(names[0]);
     showBars(names[0]);
     showBubble(names[0]);
@@ -20,6 +21,7 @@ d3.json('samples.json').then(jsonData => {
     
 });
 
+// sync charts when name data is change
 function optionChanged(name) {
     showBubble(name);
     showBars(name);
@@ -27,6 +29,7 @@ function optionChanged(name) {
     showGauge(name);
 };
 
+// insert demo data into panel
 function showDemo(name) {
     pnl.html('')
     var metadata = data.metadata.filter(obj => obj.id == name)[0];
@@ -48,14 +51,14 @@ function showBars(name) {
             orientation: 'h'
         }
     ];
-
+// plot the data in bar graphy
     Plotly.newPlot('bar', barData);
 };
-
+// create function for bubblechart
 function showBubble(name) {
     var results = data.samples.filter(obj => obj.id == name)[0]
 
-    // create the trace for the bubble chart
+    // bubble w/ a color dimension
     var trace1 = [{
         x: results.otu_ids,
         y: results.sample_values,
@@ -74,16 +77,16 @@ function showBubble(name) {
         width: 1300
     };
 
-    // create the data variable 
-    //var data1 = [trace1];
 
-    // create the bubble plot
+    // Plot the data
     Plotly.newPlot("bubble", trace1, layout);
 };
 
+// create gauge function
 function showGauge(name) {
     var frq = data.metadata.filter(obj => obj.id == name)[0].wfreq;
 
+    // Add steps, threshold, and delta
     var gaugeData = [
         {
           domain: { x: [0, 1], y: [0, 1] },
@@ -96,6 +99,7 @@ function showGauge(name) {
         }
       ];
       
+    //   Plot the data
       var layout = { width: 600, height: 400 };
       Plotly.newPlot('gauge', gaugeData, layout);
 };
